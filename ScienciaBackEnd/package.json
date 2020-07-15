@@ -1,0 +1,32 @@
+{
+  "name": "scienciabackend",
+  "version": "1.0.0",
+  "description": "Sciencia backend project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node.js",
+    "express",
+    "jwt",
+    "authentication",
+    "mysql"
+  ],
+  "author": "Houssem",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "file-extension": "^4.0.5",
+    "jshint": "^2.11.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.25.3",
+    "multer": "^1.4.2",
+    "mysql2": "^2.1.0",
+    "nodemailer": "^6.4.10",
+    "sequelize": "^5.21.5"
+  }
+}
