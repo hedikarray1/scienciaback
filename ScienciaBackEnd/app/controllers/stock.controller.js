@@ -208,6 +208,52 @@ exports.update = (req, res) => {
 
 };
 
+
+// Update a Stock by the id in the request
+exports.updateQuantite = (req, res) => {
+
+    Stock.findOne({
+            where: {
+                id: req.body.id
+            }
+        })
+        .then(stock => {
+            if (!stock) {
+                return res.status(404).send({
+                    message: "Stock Not found."
+                });
+            }
+           
+            const stk = {
+                quantite: req.body.quantite
+            };
+
+            Stock.update(stk, {
+                    where: {
+                        id: req.body.id
+                    }
+                })
+                .then(() => {
+                    res.send({
+                        message: "Stock was Updated successfully!"
+                    });
+                })
+                .catch(err => {
+                    res.status(500).send({
+                        message: err.message
+                    });
+                });
+
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message
+            });
+        });
+
+};
+
+
 // Delete a Stock with the specified id in the request
 exports.delete = (req, res) => {
     Stock.findOne({

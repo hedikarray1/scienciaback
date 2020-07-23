@@ -11,18 +11,21 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/stock/getAll", controller.findAll);
+  app.get("/api/stock/getAll", [authJwt.verifyToken], controller.findAll);
 
-  app.post("/api/stock/getById", controller.findOneById);
-  app.post("/api/stock/create", controller.create);
-  app.post("/api/stock/getByNom", controller.findByNom);
-  app.post("/api/stock/getByType", controller.findByType);
+  app.post("/api/stock/getById", [authJwt.verifyToken], controller.findOneById);
+  app.post("/api/stock/create", [authJwt.verifyToken], controller.create);
+  app.post("/api/stock/getByNom", [authJwt.verifyToken], controller.findByNom);
+  app.post("/api/stock/getByType", [authJwt.verifyToken], controller.findByType);
 
-  app.post("/api/stock/uploadImageStock", upload.single("file"), controller.uploadImage);
+  app.post("/api/stock/uploadImageStock", [authJwt.verifyToken], upload.single("file"), controller.uploadImage);
 
-  app.post("/api/stock/update", controller.update);
-  app.delete("/api/stock/deleteAll", controller.deleteAll);
+  app.post("/api/stock/update", [authJwt.verifyToken], controller.update);
 
-  app.post("/api/stock/delete", controller.delete);
+  app.post("/api/stock/updateQuantite", [authJwt.verifyToken], controller.updateQuantite);
+  
+  app.delete("/api/stock/deleteAll", [authJwt.verifyToken], controller.deleteAll);
+
+  app.post("/api/stock/delete", [authJwt.verifyToken], controller.delete);
 
 };

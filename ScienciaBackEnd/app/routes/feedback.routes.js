@@ -10,15 +10,18 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/feedback/getAll", controller.findAll);
-  app.post("/api/feedback/getById", controller.findOneById);
-  app.post("/api/feedback/create", controller.create);
+  app.get("/api/feedback/getAll",[authJwt.verifyToken], controller.findAll);
+  app.post("/api/feedback/getById",[authJwt.verifyToken], controller.findOneById);
+  app.post("/api/feedback/create",[authJwt.verifyToken], controller.create);
 
-  app.post("/api/feedback/getByIdEcole", controller.findByIdEcole);
-  app.post("/api/feedback/getByIdFormation", controller.findByIdFormation);
+  app.post("/api/feedback/getByIdEcole",[authJwt.verifyToken], controller.findByIdEcole);
 
-  app.post("/api/feedback/update", controller.update);
-  app.delete("/api/feedback/deleteAll", controller.deleteAll);
-  app.delete("/api/feedback/delete", controller.delete);
+  app.post("/api/feedback/getByIdEcoleAndReservation",[authJwt.verifyToken], controller.findByIdEcoleAndReservation);
+
+  app.post("/api/feedback/getByIdFormation",[authJwt.verifyToken], controller.findByIdFormation);
+
+  app.post("/api/feedback/update",[authJwt.verifyToken], controller.update);
+  app.delete("/api/feedback/deleteAll",[authJwt.verifyToken], controller.deleteAll);
+  app.delete("/api/feedback/delete",[authJwt.verifyToken], controller.delete);
 
 };

@@ -3,6 +3,7 @@ const ReservationFormation = db.reservationFormation;
 const Op = db.Sequelize.Op;
 const User = db.user;
 const Formation = db.formation;
+const FeedBack = db.feedback;
 
 const moment = require('moment');
 moment.locale('fr')
@@ -10,12 +11,14 @@ moment.locale('fr')
 // Create and Save a new ReservationFormation
 exports.create = (req, res) => {
     // Create a ReservationFormation
+    let sem = req.body.semaine ;
+    for (i = 0; i < sem ; i++) {
     const resFormation = {
         id_formateur:  req.body.id_formateur,
         id_ecole:  req.body.id_ecole,
         id_formation:  req.body.id_formation,
         nbr_enfants:   req.body.nbr_enfants,
-        date_formation:   req.body.date_formation,
+        date_formation:  add_weeks(req.body.date_formation,i),
         date_reservation:  req.body.date_reservation,
         prix_totale:  req.body.prix_totale,
         status:  req.body.status ,
@@ -31,7 +34,15 @@ exports.create = (req, res) => {
                 message: err.message || "Some error occurred while creating the ReservationFormation."
             });
         });
+    }
 };
+
+function add_weeks(dt, n) 
+ {
+     let d = new Date(dt) ;
+ return new Date(d.setDate(d.getDate() + (n * 7)));      
+
+ }
 
 // Retrieve all ReservationFormations from the database.
 exports.findAll = (req, res) => {
@@ -51,11 +62,15 @@ exports.findAll = (req, res) => {
         },{
             model: Formation,
             as : "formation"
+        },
+        {
+            model: FeedBack,
+            as : "feedback"
         }
        ],
      
     }).then(ReservationFormations => {
-        res.status(200).send(ReservationFormations) ;
+        res.status(200).send(setReservationDateFormat(ReservationFormations)) ;
     }).catch(err => {
         res.status(500).send({
             message: err.message
@@ -101,6 +116,10 @@ exports.findByIdEcole = (req, res) => {
         {
             model: Formation,
             as : "formation"
+        },
+        {
+            model: FeedBack,
+            as : "feedback"
         }
        ],
         order: [
@@ -146,6 +165,44 @@ exports.findByIdEcoleAndStatus = (req, res) => {
     }).then(data => {
       
         res.status(200).send(setReservationDateFormat(data));
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving ReservationFormation."
+        });
+      });
+  };
+  
+
+   
+// Find  ReservationFormation with nom
+exports.findByIdEcoleAndValider = (req, res) => {
+   
+    ReservationFormation.findAll({ 
+        where: {
+            id_ecole: req.body.id_ecole,
+            status : 2,
+            status_validation : 1
+        },
+        include: [{
+            model: User,
+            as : "formateur",
+            attributes: {
+                exclude: ['password','username','email','adresse','dateNaissance','role','telephone','etat']
+              }
+        },
+        {
+            model: Formation,
+            as : "formation"
+        }
+       ],
+        order: [
+        ['date_formation', 'DESC']
+    ]
+    }).then(data => {
+      
+        res.status(200).send(data);
       })
       .catch(err => {
         res.status(500).send({
@@ -618,7 +675,8 @@ function setReservationDateFormat(reservations) {
                 "status_validation" : val.status_validation ,
                 "ecole": val.ecole,
                 "formation" : val.formation,
-                "formateur" : val.formateur
+                "formateur" : val.formateur,
+                "feedback": val.feedback
             }
             mm.push(v);
     }

@@ -10,17 +10,17 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/type/getAll", controller.findAll);
+  app.get("/api/type/getAll", [authJwt.verifyToken], controller.findAll);
 
-  app.post("/api/type/getById", controller.findOneById);
-  app.post("/api/type/create", controller.create);
-  app.post("/api/type/getByNom", controller.findByNom);
+  app.post("/api/type/getById", [authJwt.verifyToken], controller.findOneById);
+  app.post("/api/type/create", [authJwt.verifyToken], controller.create);
+  app.post("/api/type/getByNom", [authJwt.verifyToken], controller.findByNom);
 
 
-  app.post("/api/type/update", controller.update);
+  app.post("/api/type/update", [authJwt.verifyToken], controller.update);
 
-  app.post("/api/type/deleteAll", controller.deleteAll);
+  app.post("/api/type/deleteAll", [authJwt.verifyToken], controller.deleteAll);
 
-  app.post("/api/type/delete", controller.delete);
+  app.post("/api/type/delete", [authJwt.verifyToken], controller.delete);
 
 };

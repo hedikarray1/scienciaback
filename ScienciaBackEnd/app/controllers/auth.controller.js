@@ -4,6 +4,10 @@ const User = db.user;
 const Op = db.Sequelize.Op;
 
 
+const moment = require('moment');
+moment.locale('fr')
+
+
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
@@ -84,7 +88,7 @@ exports.signin = (req, res) => {
           telephone: user.telephone,
           role: user.role,
           etat: user.etat,
-          dateNaissance: user.dateNaissance,
+          dateNaissance: moment.utc(user.dateNaissance).tz("Africa/Tunis").format('LL') ,
           accessToken: token
         });
       

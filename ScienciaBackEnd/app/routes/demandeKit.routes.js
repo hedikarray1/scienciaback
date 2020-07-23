@@ -10,24 +10,24 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/demandeKit/getAll", controller.findAll);
-  app.post("/api/demandeKit/getById", controller.findOneById);
-  app.post("/api/demandeKit/create", controller.create);
+  app.get("/api/demandeKit/getAll",[authJwt.verifyToken], controller.findAll);
+  app.post("/api/demandeKit/getById",[authJwt.verifyToken], controller.findOneById);
+  app.post("/api/demandeKit/create",[authJwt.verifyToken], controller.create);
 
-  app.post("/api/demandeKit/getByIdFormateur", controller.findByIdFormateur);
-  app.post("/api/demandeKit/getByIdFormateurByEtat", controller.findByIdFormateurByEtat);
+  app.post("/api/demandeKit/getByIdFormateur",[authJwt.verifyToken], controller.findByIdFormateur);
+  app.post("/api/demandeKit/getByIdFormateurByEtat",[authJwt.verifyToken], controller.findByIdFormateurByEtat);
   
-  app.post("/api/demandeKit/getByEtat", controller.findByEtat);
-  app.post("/api/demandeKit/getByEtatAndIdEmploye", controller.findByEtatAndIdEmploye);
+  app.post("/api/demandeKit/getByEtat",[authJwt.verifyToken], controller.findByEtat);
+  app.post("/api/demandeKit/getByEtatAndIdEmploye",[authJwt.verifyToken], controller.findByEtatAndIdEmploye);
 
-  app.post("/api/demandeKit/getDemandeValideByIdEmploye", controller.findByEtatLivraison);
+  app.post("/api/demandeKit/getDemandeValideByIdEmploye",[authJwt.verifyToken], controller.findByEtatLivraison);
 
 
-  app.post("/api/demandeKit/updateStatus", controller.updateStatus);
-  app.post("/api/demandeKit/updateStatusLivraison", controller.updateStatusLivraison);
+  app.post("/api/demandeKit/updateStatus",[authJwt.verifyToken], controller.updateStatus);
+  app.post("/api/demandeKit/updateStatusLivraison",[authJwt.verifyToken], controller.updateStatusLivraison);
 
-  app.post("/api/demandeKit/update", controller.update);
-  app.post("/api/demandeKit/deleteAll", controller.deleteAll);
-  app.post("/api/demandeKit/delete", controller.delete);
+  app.post("/api/demandeKit/update",[authJwt.verifyToken], controller.update);
+  app.post("/api/demandeKit/deleteAll",[authJwt.verifyToken], controller.deleteAll);
+  app.post("/api/demandeKit/delete",[authJwt.verifyToken], controller.delete);
 
 };

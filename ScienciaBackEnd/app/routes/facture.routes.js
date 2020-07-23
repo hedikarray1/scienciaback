@@ -10,14 +10,14 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/facture/getAll", controller.findAll);
-  app.post("/api/facture/getById", controller.findOneById);
-  app.post("/api/facture/create", controller.create);
+  app.get("/api/facture/getAll",[authJwt.verifyToken], controller.findAll);
+  app.post("/api/facture/getById",[authJwt.verifyToken], controller.findOneById);
+  app.post("/api/facture/create",[authJwt.verifyToken], controller.create);
 
-  app.post("/api/facture/getByIdEcole", controller.findByIdEcole);
-  app.post("/api/facture/getByIdReservation", controller.findByIdReservation);
-  app.post("/api/facture/update", controller.update);
-  app.delete("/api/facture/deleteAll", controller.deleteAll);
-  app.delete("/api/facture/delete", controller.delete);
+  app.post("/api/facture/getByIdEcole",[authJwt.verifyToken], controller.findByIdEcole);
+  app.post("/api/facture/getByIdReservation",[authJwt.verifyToken], controller.findByIdReservation);
+  app.post("/api/facture/update",[authJwt.verifyToken], controller.update);
+  app.delete("/api/facture/deleteAll",[authJwt.verifyToken], controller.deleteAll);
+  app.delete("/api/facture/delete",[authJwt.verifyToken], controller.delete);
 
 };

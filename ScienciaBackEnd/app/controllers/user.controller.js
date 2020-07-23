@@ -4,6 +4,9 @@ const User = db.user;
 
 const fs = require("fs");
 
+const moment = require('moment');
+moment.locale('fr')
+
 
 const Op = db.Sequelize.Op;
 
@@ -14,12 +17,43 @@ var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
   service: 'gmail',
+  host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    requireTLS: true,
   auth: {
-    user: 'houssemeddine.gabsi@esprit.tn',
-    pass: ''
+    user: 'scienciateam@gmail.com',
+    pass: 'sciencia123456S'
   }
 });
 
+function sendEmail(user){
+  var mailOptions = {
+    from: 'Sciencia Team <scienciateam@gmail.com>',
+    to: user.email,
+    subject: 'Bienvenue à Sciencia',
+    html: "<html><body> <h1>votre information </h1> <ul><li><b>Username :</b> "+user.username+
+    "</li><li><b>Email :</b> "+user.email+"</li><li><b>mot de pass :</b> "
+    +user.password+"</li><li><b>Nom :</b> "
+    +user.nom+"</li><li><b>Prenom :</b> "
+    +user.prenom+"</li><li><b>Region :</b> "+user.adresse+"</li><li><b>Adresse :</b> "+user.emplacement+"</li><li><b>Telephone :</b> "+user.telephone+"</li><li><b>Type de compte :</b> "+user.role+"</li></ul></body></html>"
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+
+      res.status(500).send({
+        message: error
+      });
+    } else {
+      console.log('Email sent: ' + info.response);
+      res.status(200).send({
+        message:   info.response
+       } )
+    }
+  });
+};
 
 exports.uploadImage = (req, res) => {
   // Update User to Database*
@@ -81,26 +115,6 @@ exports.uploadImage = (req, res) => {
 exports.create = (req, res) => {
   // Save User to Database
 
-  User.findOne({
-    attributes: {
-      exclude: ['password']
-    },
-    where: {
-      username: req.body.username
-    }
-  })
-    .then(user => {
-      if (!user) {
-        User.findOne({
-          attributes: {
-            exclude: ['password']
-          },
-          where: {
-            email: req.body.email
-          }
-        })
-          .then(user => {
-            if (!user) {
               User.create({
                 username: req.body.username,
                 email: req.body.email,
@@ -112,80 +126,50 @@ exports.create = (req, res) => {
                 telephone: req.body.telephone,
                 role: req.body.role,
                 etat: req.body.etat,
-                dateNaissance: req.body.dateNaissance
+                dateNaissance: req.body.dateNaissance,
+                emplacement:req.body.emplacement
               })
-                .then(() => {
-                  res.status(200).send({ message: "User was created successfully!" });
+                .then(user  => {
+                  const userSendMail ={
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: req.body.password,
+                    nom: req.body.nom,
+                    prenom: req.body.prenom,
+                    adresse: req.body.adresse,
+                    photo: req.body.photo,
+                    telephone: req.body.telephone,
+                    role: req.body.role,
+                    etat: req.body.etat,
+                    dateNaissance: req.body.dateNaissance,
+                    emplacement:req.body.emplacement
+                  }
+                  sendEmail(userSendMail) ;
+                  res.status(200).send(user );
                 })
                 .catch(err => {
+                  console.log({ message: err.message }) ;
                   res.status(500).send({ message: err.message });
                 });
-            }
-            else {
-              return res.status(400).send({
-                message: "email existe"
-              });
-            }
-
-          })
-          .catch(err => {
-            res.status(500).send({
-              message: err.message
-            });
-          });
-      }
-      else {
-        return res.status(400).send({
-          message: "Username existe"
-        });
-      }
-
-
-
-
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: err.message
-      });
-    });
-
+            
 
 };
 
-exports.sendMail = (req, res) => {
-  var mailOptions = {
-    from: 'houssemeddine.gabsi@esprit.tn',
-    to: 'houssemeddine.gabsi@gmail.com',
-    subject: 'Sending Email using Node.js',
-    text: 'That was easy!'
-  };
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-
-      res.status(500).send({
-        message: error
-      });
-    } else {
-      console.log('Email sent: ' + info.response);
-      res.status(200).send(
-        info.response
-      )
-    }
-  });
-};
 
 
 exports.getAll = (req, res) => {
-  User.findAll({
+  User.findAll({   where: {
+    id: {
+        [Op.not]: 0
+    }
+
+},
     attributes: {
       exclude: ['password']
     }
   }).then(users => {
     res.status(200).send(
-      users
+      setListUserDate(users)
     )
   }).catch(err => {
     res.status(500).send({
@@ -205,7 +189,7 @@ exports.getByRole = (req, res) => {
     }
   }).then(users => {
     res.status(200).send(
-      users
+      setListUserDate(users)
     )
   }).catch(err => {
     res.status(500).send({
@@ -227,7 +211,7 @@ exports.getByRoleAndRegion = (req, res) => {
     }
   }).then(users => {
     res.status(200).send(
-      users
+      setListUserDate(users) 
     )
   }).catch(err => {
     res.status(500).send({
@@ -253,6 +237,31 @@ exports.getById = (req, res) => {
       }
 
 
+      res.status(200).send(setUserDate(user));
+
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message
+      });
+    });
+
+};
+
+exports.getById2 = (req, res) => {
+  User.findOne({
+    where: {
+      id: req.body.id
+    }
+  })
+    .then(user => {
+      if (!user) {
+        return res.status(404).send({
+          message: "User Not found."
+        });
+      }
+
+
       res.status(200).send({
         id: user.id,
         username: user.username,
@@ -265,8 +274,8 @@ exports.getById = (req, res) => {
         role: user.role,
         nom_ecole: user.nom_ecole,
         etat: user.etat,
-        dateNaissance: user.dateNaissance
-
+        dateNaissance: user.dateNaissance,
+        emplacement:user.emplacement
       });
 
     })
@@ -292,21 +301,7 @@ exports.getByUsername = (req, res) => {
       }
 
 
-      res.status(200).send({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        nom: user.nom,
-        prenom: user.prenom,
-        adresse: user.adresse,
-        photo: user.photo,
-        telephone: user.telephone,
-        role: user.role,
-        nom_ecole: user.nom_ecole,
-        etat: user.etat,
-        dateNaissance: user.dateNaissance
-
-      });
+      res.status(200).send(setUserDate(user));
 
     })
     .catch(err => {
@@ -332,21 +327,7 @@ exports.getByEmail = (req, res) => {
       }
 
 
-      res.status(200).send({
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        nom: user.nom,
-        prenom: user.prenom,
-        adresse: user.adresse,
-        photo: user.photo,
-        telephone: user.telephone,
-        role: user.role,
-        nom_ecole: user.nom_ecole,
-        etat: user.etat,
-        dateNaissance: user.dateNaissance
-
-      });
+      res.status(200).send( setUserDate(user));
 
     })
     .catch(err => {
@@ -401,15 +382,9 @@ exports.update = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
-      User.update({
-        username: req.body.username,
-        email: req.body.email,
-        nom: req.body.nom,
-        prenom: req.body.prenom,
-        adresse: req.body.adresse,
-        telephone: req.body.telephone,
-        dateNaissance: req.body.dateNaissance
-      }, {
+      User.update(
+        req.body, 
+        {
         where: {
           id: req.body.id
         }
@@ -527,3 +502,52 @@ exports.debloquer = (req, res) => {
 };
 
 
+
+
+function setListUserDate(users) {
+  var mm = [];
+  for (let user of users) {
+   
+          let v = {
+              "id": user.id,
+              "username": user.username,
+              "email": user.email,
+              "nom": user.nom,
+              "prenom": user.prenom,
+              "adresse": user.adresse,
+              "photo": user.photo,
+              "telephone": user.telephone,
+              "role": user.role ,
+              "etat": user.etat,
+              "dateNaissance":  moment.utc(user.dateNaissance).tz("Africa/Tunis").format('LL') ,
+              "emplacement": user.emplacement
+      
+          }
+          mm.push(v);
+  }
+  return mm;
+}
+
+
+
+function setUserDate(user) {
+ 
+  
+   
+          let v = {
+              "id": user.id,
+              "username": user.username,
+              "email": user.email,
+              "nom": user.nom,
+              "prenom": user.prenom,
+              "adresse": user.adresse,
+              "photo": user.photo,
+              "telephone": user.telephone,
+              "role": user.role ,
+              "etat": user.etat,
+              "dateNaissance":  moment.utc(user.dateNaissance).tz("Africa/Tunis").format('LL') ,
+              "emplacement" : user.emplacement
+      
+          };
+  return v;
+}

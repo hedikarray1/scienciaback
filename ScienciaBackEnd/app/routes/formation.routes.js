@@ -12,18 +12,18 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/formation/getAll", controller.findAll);
+  app.get("/api/formation/getAll",[authJwt.verifyToken], controller.findAll);
 
-  app.post("/api/formation/getById", controller.findOneById);
-  app.post("/api/formation/create", controller.create);
-  app.post("/api/formation/getByNom", controller.findByNom);
-  app.post("/api/formation/getByType", controller.findByType);
+  app.post("/api/formation/getById",[authJwt.verifyToken], controller.findOneById);
+  app.post("/api/formation/create",[authJwt.verifyToken], controller.create);
+  app.post("/api/formation/getByNom",[authJwt.verifyToken], controller.findByNom);
+  app.post("/api/formation/getByType",[authJwt.verifyToken], controller.findByType);
 
-  app.post("/api/formation/uploadPdf", uploadPdf.single("file"), controller.uploadPdf);
+  app.post("/api/formation/uploadPdf",[authJwt.verifyToken], uploadPdf.single("file"), controller.uploadPdf);
 
-  app.post("/api/formation/update", controller.update);
-  app.delete("/api/formation/deleteAll", controller.deleteAll);
+  app.post("/api/formation/update",[authJwt.verifyToken], controller.update);
+  app.delete("/api/formation/deleteAll",[authJwt.verifyToken], controller.deleteAll);
 
-  app.post("/api/formation/delete", controller.delete);
+  app.post("/api/formation/delete",[authJwt.verifyToken], controller.delete);
 
 };

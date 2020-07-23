@@ -10,11 +10,10 @@ module.exports = (sequelize, Sequelize) => {
     nom: { type: Sequelize.STRING },
     prenom: { type: Sequelize.STRING },
     adresse: { type: Sequelize.STRING },
+    emplacement : {type : Sequelize.STRING},
     dateNaissance: {
-       type: Sequelize.DATEONLY,
-       get: function() {
-        return moment(this.getDataValue('dateNaissance')).tz("Africa/Tunis").format('LL');
-    }
+       type: Sequelize.DATEONLY
+  
       },
     photo: { type: Sequelize.STRING },
     role: { type: Sequelize.ENUM('admin', 'formateur', 'employe', 'ecole') },

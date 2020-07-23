@@ -10,21 +10,21 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/notification/getAll", controller.findAll);
-  app.post("/api/notification/getById", controller.findOneById);
+  app.get("/api/notification/getAll",[authJwt.verifyToken], controller.findAll);
+  app.post("/api/notification/getById",[authJwt.verifyToken], controller.findOneById);
 
-  app.post("/api/notification/create", controller.create);
-  app.post("/api/notification/createNotifToAllEmploye", controller.createNotifToAllEmploye);
-
-
-  app.post("/api/notification/getByIdRecepteur", controller.findByIdRecepteur);
-  app.post("/api/notification/countNotifByIdRecepteur", controller.countNotifByIdRecepteur);
+  app.post("/api/notification/create",[authJwt.verifyToken], controller.create);
+  app.post("/api/notification/createNotifToAllEmploye",[authJwt.verifyToken], controller.createNotifToAllEmploye);
 
 
-  app.post("/api/notification/updateStatus", controller.updateStatus);
+  app.post("/api/notification/getByIdRecepteur",[authJwt.verifyToken], controller.findByIdRecepteur);
+  app.post("/api/notification/countNotifByIdRecepteur",[authJwt.verifyToken], controller.countNotifByIdRecepteur);
 
-  app.post("/api/notification/update", controller.update);
-  app.delete("/api/notification/deleteAll", controller.deleteAll);
-  app.delete("/api/notification/delete", controller.delete);
+
+  app.post("/api/notification/updateStatus",[authJwt.verifyToken], controller.updateStatus);
+
+  app.post("/api/notification/update",[authJwt.verifyToken], controller.update);
+  app.delete("/api/notification/deleteAll",[authJwt.verifyToken], controller.deleteAll);
+  app.delete("/api/notification/delete",[authJwt.verifyToken], controller.delete);
 
 };

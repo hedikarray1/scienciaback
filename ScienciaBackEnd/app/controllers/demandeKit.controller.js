@@ -392,6 +392,10 @@ if (data.id_employe == 0) {
                 message: err.message
             });
         });
+    }else {
+        return res.status(404).send({
+            message: "DemandeKit encour de maintenance "
+        });
     }
     })
     .catch(err => {

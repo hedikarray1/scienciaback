@@ -15,15 +15,52 @@ exports.create = (req, res) => {
         date:req.body.date 
     };
     // Save Feedback in the database
-    Feedback.create(feedback)
-        .then(data => {
-            res.status(200).send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Some error occurred while creating the Feedback."
+    Feedback.findOne({
+        where: {
+            id_reservation_formation: req.body.id_reservation_formation ,
+            id_ecole: req.body.id_ecole
+        }
+    })
+    .then(fb => {
+        if (!fb) {
+          
+            Feedback.create(feedback)
+            .then(data => {
+                res.status(200).send(data);
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the Feedback."
+                });
             });
+        }else{
+            fb.date = req.body.date ;
+            fb.message = req.body.message ;
+
+            Feedback.update(feedback, {
+                where: {
+                    id: fb.id
+                }
+            })
+            .then(() => {
+                res.send({
+                    message: "Feedback was Updated successfully!"
+                });
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: err.message
+                });
+            });
+        }
+      
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message
         });
+    });
+
+  
 };
 
 // Retrieve all Feedbacks from the database.
@@ -93,13 +130,58 @@ exports.findByIdEcole = (req, res) => {
     Feedback.findAll({ 
         where: {
             id_ecole: req.body.id_ecole
+        },
+        include: [{
+            model: Reservation,
+            as: "reservation",
+            include: [{
+                model: User,
+                as : "formateur",
+                attributes: {
+                    exclude: ['password','username','email','adresse','dateNaissance','role','telephone','etat']
+                  }
+            },
+            {
+                model: Formation,
+                as : "formation",
+            }
+           ]
+        },
+        {
+            model: User,
+            as: "ecole",
+            attributes: {
+                exclude: ['password','username','email','adresse','dateNaissance','role','telephone','etat']
+              }
+        }
+
+    ], 
+     order: [
+        ['date','DESC']
+    ]
+    }).then(data => {
+        
+        res.status(200).send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message:
+            err.message || "Some error occurred while retrieving Feedback."
+        });
+      });
+  };
+
+  
+// Find  Feedback with nom
+exports.findByIdEcoleAndReservation = (req, res) => {
+   
+    Feedback.findOne({ 
+        where: {
+            id_reservation_formation : req.body.id_reservation_formation ,
+            id_ecole: req.body.id_ecole
         }
     }).then(data => {
-        if (data.length == 0) { 
-            return res.status(404).send({
-                message: "Feedback  Not found."
-            });
-        }
+        
         res.status(200).send(data);
       })
       .catch(err => {

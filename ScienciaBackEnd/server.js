@@ -44,6 +44,7 @@ db.sequelize.sync();
   require('./app/routes/user.routes')(app);
   require('./app/routes/stock.routes')(app);
   require('./app/routes/type.routes')(app);
+  require('./app/routes/article.routes')(app);
   require('./app/routes/demandeKit.routes')(app);
   require('./app/routes/facture.routes')(app);
   require('./app/routes/notification.routes')(app);

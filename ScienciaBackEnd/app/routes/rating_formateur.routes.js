@@ -10,17 +10,17 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/rating_formateur/getAll", controller.findAll);
-  app.post("/api/rating_formateur/getById", controller.findOneById);
-  app.post("/api/rating_formateur/create", controller.create);
+  app.get("/api/rating_formateur/getAll",[authJwt.verifyToken], controller.findAll);
+  app.post("/api/rating_formateur/getById",[authJwt.verifyToken], controller.findOneById);
+  app.post("/api/rating_formateur/create",[authJwt.verifyToken], controller.create);
 
-  app.post("/api/rating_formateur/getByIdEcole", controller.findByIdEcole);
-  app.post("/api/rating_formateur/getByIdFormateur", controller.findByIdFormateur);
+  app.post("/api/rating_formateur/getByIdEcole",[authJwt.verifyToken], controller.findByIdEcole);
+  app.post("/api/rating_formateur/getByIdFormateur",[authJwt.verifyToken], controller.findByIdFormateur);
 
-  app.post("/api/rating_formateur/getRatingFormateur", controller.calculRatingFormateur);
-  app.post("/api/rating_formateur/getRatingFormateurEcole", controller.calculRatingFormateurEcole);
+  app.post("/api/rating_formateur/getRatingFormateur",[authJwt.verifyToken], controller.calculRatingFormateur);
+  app.post("/api/rating_formateur/getRatingFormateurEcole",[authJwt.verifyToken], controller.calculRatingFormateurEcole);
 
-  app.delete("/api/rating_formateur/deleteAll", controller.deleteAll);
-  app.delete("/api/rating_formateur/delete", controller.delete);
+  app.delete("/api/rating_formateur/deleteAll",[authJwt.verifyToken], controller.deleteAll);
+  app.delete("/api/rating_formateur/delete",[authJwt.verifyToken], controller.delete);
 
 };

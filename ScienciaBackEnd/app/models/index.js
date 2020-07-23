@@ -27,6 +27,7 @@ db.sequelize = sequelize;
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
 db.stock = require("../models/stock.model.js")(sequelize, Sequelize);
 db.type = require("../models/type.model.js")(sequelize, Sequelize);
+db.article = require("../models/article.model.js")(sequelize, Sequelize);
 db.formation = require("../models/formation.model.js")(sequelize, Sequelize);
 db.facture = require("../models/facture.model.js")(sequelize, Sequelize);
 db.feedback = require("../models/feedback.model.js")(sequelize, Sequelize);
